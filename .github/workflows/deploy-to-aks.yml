@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       build_id:
-        description: 'Build ID'
         required: true
-
+        description: Build ID
+        default: 'latest'
 permissions:
   id-token: write
   contents: write
