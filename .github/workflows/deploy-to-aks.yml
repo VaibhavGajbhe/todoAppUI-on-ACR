@@ -1,0 +1,48 @@
+name: Deploy to AKS from ACR
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: 'Build ID'
+        required: true
+        
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
+      IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+      BUILD_ID: ${{ github.run_number }}
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        auth-type: SERVICE_PRINCIPAL
+
+    - name: Set AKS Context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Replace Image Tag in Manifest
+      run: |
+        sed -i "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:build-${BUILD_ID}|" k8s/deployment.yaml
+
+    - name: Deploy to AKS
+      run: kubectl apply -f k8s/deployment.yaml
+
+    - name: Get AKS Node External IPs
+      run: kubectl get nodes -o wide
