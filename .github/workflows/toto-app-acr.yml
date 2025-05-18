@@ -8,7 +8,6 @@ permissions:
   id-token: write
   contents: read
 
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -25,12 +24,8 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        auth-type: service-principal
-
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        auth-type: SERVICE_PRINCIPAL
 
     - name: ACR Login
       run: az acr login --name ${{ secrets.ACR_NAME }}
