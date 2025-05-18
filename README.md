@@ -84,3 +84,5 @@ sudo service nginx restart
 ```
 
 These configurations enable communication between the Frontend and Backend using Private IP on the Backend VM. Ensure that the IPs and ports are correctly set to match your environment.
+
+We create pipline for Buld and Push the image on ACR
