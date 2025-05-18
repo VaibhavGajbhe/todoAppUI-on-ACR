@@ -47,4 +47,5 @@ jobs:
         workflow: deploy-to-aks.yml
         ref: main
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        inputs: '{"build_id":"${{ github.run_number }}"}'
+        inputs: '{"build_id":"build-'${{ github.run_number }}'"}'
+
