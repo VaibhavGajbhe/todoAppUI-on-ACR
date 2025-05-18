@@ -48,4 +48,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         ref: main
         inputs: |
-          build_id=${{ github.run_number }}
+          inputs: '{"build_id":"${{ github.run_number }}"}'
