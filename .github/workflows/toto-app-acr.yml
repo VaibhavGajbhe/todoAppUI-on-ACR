@@ -40,6 +40,11 @@ jobs:
       run: |
         docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
         docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:build-${BUILD_ID}
+    - name: Set BUILD_ID and INPUTS
+      run: |
+        echo "BUILD_ID=build-${{ github.run_number }}" >> $GITHUB_ENV
+        echo "DISPATCH_INPUTS={\"build_id\":\"build-${{ github.run_number }}\"}" >> $GITHUB_ENV
+
     #deploy to AKS
     - name: Trigger Deploy to AKS
       uses: benc-uk/workflow-dispatch@v1
@@ -47,5 +52,4 @@ jobs:
         workflow: deploy-to-aks.yml
         ref: main
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        inputs: '{"build_id":"build-${{ github.run_number }}"}'
-
+        inputs: ${{ env.DISPATCH_INPUTS }}
