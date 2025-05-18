@@ -3,6 +3,11 @@ name: Build and Push Docker Image to ACR
 on:
   push:
     branches: [ main ]  # Trigger on push to main branch
+    
+permissions:
+  id-token: write
+  contents: read
+
 
 jobs:
   build-and-push:
