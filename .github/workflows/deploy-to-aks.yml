@@ -42,7 +42,11 @@ jobs:
     - name: Replace Image Tag in Manifest
       run: |
         sed -i "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:build-${BUILD_ID}|" k8s/deployment.yaml
-
+    - name: Print Image Name and tag
+      run: |
+        echo "Image Name: $ACR_LOGIN_SERVER/$IMAGE_NAME:build-${BUILD_ID}"
+        echo "Image Name: $ACR_LOGIN_SERVER/$IMAGE_NAME:build-${BUILD_ID}" >> $GITHUB_ENV
+        
     - name: Deploy to AKS
       run: kubectl apply -f k8s/deployment.yaml
 
