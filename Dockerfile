@@ -1,36 +1,19 @@
-# Stage 1: Build React app
+# Stage 1: Build stage for the Node.js app
 FROM node:16.17.0-alpine AS build-one
-
+# Set the working directory
 WORKDIR /todoapp
-
-# Copy package files and install dependencies first (better cache)
-COPY package*.json ./
+# Copy the application code
+COPY . . 
+# Install dependencies and build the application
 RUN npm install
-
-# Copy rest of source code
-COPY . .
-
-# Build the React app
 RUN npm run build
-
-# Stage 2: Production with NGINX
+# Stage 2: Production stage with NGINX
 FROM nginx:stable-alpine
-
-# Remove default NGINX static files
+# Remove the default NGINX static files
 RUN rm -rf /usr/share/nginx/html/*
-
-# Copy build output from Stage 1
+# Copy the build output from the first stage to NGINX's static filedirectory
 COPY --from=build-one /todoapp/build/ /usr/share/nginx/html/
-
-# Copy custom entrypoint script and make it executable
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-# Expose port 80
+# Expose the default NGINX port
 EXPOSE 80
-
-# Use the custom entrypoint script as the container entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-# Start NGINX in foreground
+# Start NGINX in the foreground
 CMD ["nginx", "-g", "daemon off;"]
